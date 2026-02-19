@@ -1,4 +1,4 @@
-import { S3Client } from "bun";
+const { S3Client } = require("bun");
 
 class Bucketizer {
     constructor() {
