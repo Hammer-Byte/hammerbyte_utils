@@ -1,0 +1,19 @@
+{
+    "name": "@hammerbyte/utils",
+    "version": "0.0.12",
+    "author": "Nisarg Jani",
+    "license": "ISC",
+    "keywords": [
+        "logger",
+        "request",
+        "middleware",
+        "utils",
+        "singleton",
+        "hammerbyte",
+        "hammerbyte_utils"
+    ],
+    "description": "hammerbyte utils package",
+    "dependencies": {
+        "chalk": "^4.1.2"
+    }
+}
