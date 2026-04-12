@@ -76,3 +76,4 @@ class Logger {
 const loggerInstance = new Logger();
 // We don't freeze it yet so that .init() can change the config properties
 module.exports = loggerInstance;
+

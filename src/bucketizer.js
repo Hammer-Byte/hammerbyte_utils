@@ -9,6 +9,7 @@ class Bucketizer {
         this.client = new S3Client({
             accessKeyId: process.env.CONTABO_STORAGE_ACCESS_KEY,
             secretAccessKey: process.env.CONTABO_STORAGE_SECRET_KEY,
+            tenant: process.env.CONTABO_TENANT ,
             bucket: process.env.CONTABO_BUCKET_NAME,
             endpoint: process.env.CONTABO_BUCKET_REGION_URL,
         });
@@ -20,10 +21,10 @@ class Bucketizer {
     }
 
     async get({ file_name, accumulator = "private" }) {
-        const bucketFile = contaboStorageClient.file(file_name);
+        const bucketFile = this.client.file(file_name);
         return accumulator == "private"
             ? bucketFile.presign({ expiresIn: 3600 })
-            : `${process.env.CONTABO_BUCKET_REGION_URL}/${process.env.CONTABO_BUCKET_NAME}/${file_name}`;
+            : `${process.env.CONTABO_BUCKET_REGION_URL}/${process.env.CONTABO_TENANT}:${process.env.CONTABO_BUCKET_NAME}/${file_name}`;
     }
 
     async bucketize(key, data, acl = "private") {
