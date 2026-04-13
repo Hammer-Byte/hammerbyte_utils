@@ -1,38 +1,40 @@
-const { S3Client } = require("bun");
+const requestService = require("./saas/requester");
+const { SAAS } = require("./constants");
 
 class Bucketizer {
     constructor() {
         if (Bucketizer.instance) {
             return Bucketizer.instance;
         }
-        // Configuration (can be read from Bun.env)
-        this.client = new S3Client({
-            accessKeyId: process.env.CONTABO_STORAGE_ACCESS_KEY,
-            secretAccessKey: process.env.CONTABO_STORAGE_SECRET_KEY,
-            tenant: process.env.CONTABO_TENANT ,
-            bucket: process.env.CONTABO_BUCKET_NAME,
-            endpoint: process.env.CONTABO_BUCKET_REGION_URL,
-        });
+
+        this.applicationId = undefined;
+        this.applicationToken = undefined;
+
         Bucketizer.instance = this;
     }
 
-    async exists({ file_name }) {
-        return await this.client.file(file_name).exists();
+    /**
+     * Call once at app startup with SaaS API credentials.
+     */
+    init({ applicationId, applicationToken } = {}) {
+        this.applicationId = applicationId;
+        this.applicationToken = applicationToken;
     }
 
-    async get({ file_name, accumulator = "private" }) {
-        const bucketFile = this.client.file(file_name);
-        return accumulator == "private"
-            ? bucketFile.presign({ expiresIn: 3600 })
-            : `${process.env.CONTABO_BUCKET_REGION_URL}/${process.env.CONTABO_TENANT}:${process.env.CONTABO_BUCKET_NAME}/${file_name}`;
-    }
-
-    async bucketize(key, data, acl = "private") {
-        const file = this.client.file(key);
-        // Bun's S3 write returns a promise that resolves when the upload is complete
-        return await file.write(data, { acl });
+    async getPutter(file, accumulator) {
+        return requestService({
+            service: SAAS.SERVICES.BUCKETIZER,
+            path: "",
+            method: "POST",
+            headers: {
+                [SAAS.HEADERS.APPLICATION_ID]: String(this.applicationId),
+                [SAAS.HEADERS.APPLICATION_TOKEN]: this.applicationToken,
+            },
+            body: { file, accumulator },
+        });
     }
 }
+
 
 const bucketizerInstance = new Bucketizer();
 module.exports = bucketizerInstance;

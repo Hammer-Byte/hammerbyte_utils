@@ -1,6 +1,5 @@
-const requestService = require("./requester");
-const { SAAS } = require("../constants");
-const { HEADERS, SERVICES } = SAAS;
+const requestService = require("./saas/requester");
+const { SAAS } = require("./constants");
 
 class Mailer {
     constructor() {
@@ -22,16 +21,16 @@ class Mailer {
         this.applicationToken = applicationToken;
     }
 
-    async send({ to, subject, body, html_enabled = false } = {}) {
+    async send(email) {
         return requestService({
-            service: SERVICES.MAILER,
-            path: "mails",
+            service: SAAS.SERVICES.MAILER,
+            path: "",
             method: "POST",
             headers: {
-                [HEADERS.APPLICATION_ID]: this.applicationId,
-                [HEADERS.APPLICATION_TOKEN]: this.applicationToken,
+                [SAAS.HEADERS.APPLICATION_ID]: this.applicationId,
+                [SAAS.HEADERS.APPLICATION_TOKEN]: this.applicationToken,
             },
-            body: { to, subject, body, html_enabled },
+            body: email,
         });
     }
 }

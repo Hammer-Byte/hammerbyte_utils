@@ -4,10 +4,9 @@ const logger = require("./src/logger");
 const middlewares = require("./src/middlewares");
 const requester = require("./src/requester");
 const bucketizer = require("./src/bucketizer");
-const saas_mailer = require("./src/saas/mailer");
+const mailer = require("./src/mailer");
 const saas_requester = require("./src/saas/requester");
-const { SAAS } = require("./src/constants");
-
+const CONSTANTS = require("./src/constants");
 
 module.exports = {
     cacher,
@@ -16,9 +15,7 @@ module.exports = {
     middlewares,
     requester,
     bucketizer,
-    saas_mailer,
+    mailer,
     saas_requester,
-    SAAS,
-
-
+    CONSTANTS,
 };

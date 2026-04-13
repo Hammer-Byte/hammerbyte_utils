@@ -1,5 +1,5 @@
+const { logger } = require("@hammerbyte/utils");
 const { SAAS } = require("../constants");
-const { HOST } = SAAS;
 
 async function requestService({
     headers = {},
@@ -8,16 +8,12 @@ async function requestService({
     method = "GET",
     getQuery = false,
     body = false,
-    onRequestStart = false,
-    onResponseReceieved = false,
-    onRequestFailure = false,
-    onRequestEnd = false,
-    parseResponseBody = true,
+  
+   
 } = {}) {
-    if (onRequestStart) await onRequestStart();
 
     // Build base URL
-    let url = (HOST || "http://127.0.0.1:8080")
+    let url = (SAAS.HOST || "http://127.0.0.1:8080")
     .replace(/\/$/, "") // Remove trailing slash if exists
 
     if(service) {
@@ -27,8 +23,6 @@ async function requestService({
     if(path) {
         url = url.concat("/").concat(path);
     }
-
-    console.log(url);
 
     // Append Query Parameters
     if (getQuery) {
@@ -48,27 +42,21 @@ async function requestService({
         fetchOptions.body = body instanceof (global.FormData || Object) ? body : JSON.stringify(body);
     }
 
+    const response = await fetch(url, fetchOptions);
+    const result = {
+        responseCode: response.status,
+        responseBody: undefined,
+    };
+
+    const raw = await response.text();
     try {
-        const response = await fetch(url, fetchOptions);
-        let result = response;
-
-        if (parseResponseBody) {
-            const contentType = response.headers.get("content-type");
-            if (contentType && contentType.includes("application/json")) {
-                result = await response.json();
-            } else {
-                result = await response.text();
-            }
-        }
-
-        if (onResponseReceieved) await onResponseReceieved(result, response.status);
-        return result; // Return result for easier async/await usage
-    } catch (e) {
-        if (onRequestFailure) await onRequestFailure(e);
-        throw e; // Re-throw so the caller knows it failed
-    } finally {
-        if (onRequestEnd) await onRequestEnd();
+        result.responseBody = raw ? JSON.parse(raw) : raw;
+    } catch (error) {
+        logger.error(error);
+        result.responseBody = raw;
     }
+
+    return result; 
 }
 
 module.exports = requestService;
