@@ -1,6 +1,7 @@
 const libCrypto = require("crypto");
 const libFs = require("fs");
 const libPath = require("path");
+const logger = require("./logger");
 
 class Filer {
     constructor() {
@@ -72,6 +73,7 @@ class Filer {
     prepareTemplated(templatePath, injects) {
         try {
             const absolutePath = libPath.resolve(process.cwd(), templatePath);
+            logger.info(`Processing Template From ${absolutePath}`);
             let content = libFs.readFileSync(absolutePath, "utf8");
 
             for (const [key, value] of Object.entries(injects)) {

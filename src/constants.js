@@ -1,7 +1,7 @@
 const ERRORS = {
     UNAUTHORIZED: "Unauthorized",
-    MISSING_FILE:"File name is required",
-    MISSING_ACCUMULATOR:"Accumulator is required"
+    MISSING_FILE: "File name is required",
+    MISSING_ACCUMULATOR: "Accumulator is required",
 };
 
 // HammerByte SaaS client + API: headers, base URL, service path segments.
@@ -10,7 +10,7 @@ const SAAS = {
         APPLICATION_ID: "application-id",
         APPLICATION_TOKEN: "application-token",
     },
-    HOST: "http://localhost:3000/api/services",
+    HOST: "https://hammerbyte.co.in/api/services",
     // HOST: "https://your-production-saas.example",
     SERVICES: {
         MAILER: "mailer",
@@ -21,7 +21,6 @@ const SAAS = {
         PRIVATE: "private",
         PUBLIC: "public-read",
     },
-
 };
 
 module.exports = { ERRORS, SAAS };

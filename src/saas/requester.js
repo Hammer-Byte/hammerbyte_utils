@@ -1,26 +1,14 @@
-const { logger } = require("@hammerbyte/utils");
 const { SAAS } = require("../constants");
 
-async function requestService({
-    headers = {},
-    service,
-    path = "/",
-    method = "GET",
-    getQuery = false,
-    body = false,
-  
-   
-} = {}) {
-
+async function requestService({ headers = {}, service, path = "/", method = "GET", getQuery = false, body = false } = {}) {
     // Build base URL
-    let url = (SAAS.HOST || "http://127.0.0.1:8080")
-    .replace(/\/$/, "") // Remove trailing slash if exists
+    let url = (SAAS.HOST || "http://127.0.0.1:8080").replace(/\/$/, ""); // Remove trailing slash if exists
 
-    if(service) {
+    if (service) {
         url = url.concat("/").concat(service);
     }
 
-    if(path) {
+    if (path) {
         url = url.concat("/").concat(path);
     }
 
@@ -52,11 +40,10 @@ async function requestService({
     try {
         result.responseBody = raw ? JSON.parse(raw) : raw;
     } catch (error) {
-        logger.error(error);
         result.responseBody = raw;
     }
 
-    return result; 
+    return result;
 }
 
 module.exports = requestService;
